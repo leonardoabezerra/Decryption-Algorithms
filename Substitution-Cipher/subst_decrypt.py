@@ -98,7 +98,6 @@ def sort_freq(freq):
 def compare_freq(sorted_freq, reference_freq):
     mapping = {}
     for i in range(len(sorted_freq)):
-        if sorted_freq[i][1] == 0: break
         mapping[sorted_freq[i][0]] = reference_freq[i]
     return mapping
 
@@ -133,19 +132,19 @@ def get_score(plaintext, ref_score):
         if trigram in ref_score[1]:
             score += ref_score[1][trigram]
         
-    clean_text = plaintext.replace('.', '').replace(',', '').replace('-', ' ')
+    clean_text = plaintext.replace('.', '').replace(',', '').replace('-', '').replace(' ', '')
     text_length = len(clean_text)
 
     for i in range(text_length):
         for j in range(i + 3, min(i + 13, text_length + 1)):
-            slice = clean_text[i:j]
+            word = clean_text[i:j]
             
-            if slice in ref_score[2]:
+            if word in ref_score[2]:
                 score += 50
 
-                if len(slice) > 4:
+                if len(word) > 4:
                     score += 150
-                if len(slice) > 7:
+                if len(word) > 7:
                     score += 300
 
     return score
@@ -171,7 +170,6 @@ def mutate(ciphertext, mapping, score, ref_score):
 def start_decryption(ciphertext, mapping, score, ref_score):
     attempts = {}
     for i in range(10000):
-        i += 1
         mapping, score = mutate(ciphertext, mapping, score, ref_score)
 
         if i >= 9800:
@@ -203,7 +201,7 @@ def main():
         while True:        
             
             top_attempts = {}
-            CIPHERTEXT = user_input
+            CIPHERTEXT = user_input.upper()
 
             print("DECRYPTING...\n[" + " "*50 + "]", end="", flush=True)
 
